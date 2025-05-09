@@ -83,15 +83,20 @@ const ProductDetails = () => {
       ) : (
         <>
           <div className="flex flex-wrap relative items-between mt-[2rem] ml-[10rem]">
-            <div>
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full xl:w-[50rem] lg:w-[45rem] md:w-[30rem] sm:w-[20rem] mr-[2rem]"
-              />
+          <div>
+  <img
+    src={
+      product?.photo?.data
+        ? `http://localhost:5000${product.photo.data}`
+        : "/placeholder.jpg"
+    }
+    alt={product.name}
+    className="w-full xl:w-[50rem] lg:w-[45rem] md:w-[30rem] sm:w-[20rem] mr-[2rem]"
+  />
 
-              <HeartIcon product={product} />
-            </div>
+  <HeartIcon product={product} />
+</div>
+
 
             <div className="flex flex-col justify-between">
               <h2 className="text-2xl font-semibold">{product.name}</h2>

@@ -3,10 +3,11 @@ import User from "../models/userModel.js";
 import asyncHandler from "./asyncHandler.js";
 
 const authenticate = asyncHandler(async (req, res, next) => {
-  let token;
-
-  // Read JWT from the 'jwt' cookie
-  token = req.cookies.jwt;
+  console.log("All cookies:", req.cookies); // Add this line
+  const token = req.cookies.jwt;
+  console.log("Extracted JWT:", token);     // And this line
+  
+  console.log("Received token:", token);
 
   if (token) {
     try {

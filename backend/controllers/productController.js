@@ -1,34 +1,42 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
 
-const addProduct = asyncHandler(async (req, res) => {
+// In productController.js
+const addProduct = async (req, res) => {
   try {
-    const { name, description, price, category, quantity, brand } = req.fields;
-
-    // Validation
-    switch (true) {
-      case !name:
-        return res.json({ error: "Name is required" });
-      case !brand:
-        return res.json({ error: "Brand is required" });
-      case !description:
-        return res.json({ error: "Description is required" });
-      case !price:
-        return res.json({ error: "Price is required" });
-      case !category:
-        return res.json({ error: "Category is required" });
-      case !quantity:
-        return res.json({ error: "Quantity is required" });
+    console.log("Request body:", req.body); // Debug log
+    
+    const { name, description, price, category, quantity, brand, countInStock, image } = req.body;
+    
+    // Basic validation
+    if (!name || !description || !price || !category || !quantity || !brand || !image) {
+      return res.status(400).json({ message: "All required fields must be provided" });
     }
 
-    const product = new Product({ ...req.fields });
-    await product.save();
-    res.json(product);
+    const product = new Product({
+      name,
+      description,
+      price: Number(price),
+      category,
+      quantity: Number(quantity),
+      brand,
+      countInStock: Number(countInStock || 0),
+      image,
+      user: req.user._id,
+    });
+
+    const createdProduct = await product.save();
+    console.log("Created Product:", createdProduct);
+
+    return res.status(201).json(createdProduct);
   } catch (error) {
-    console.error(error);
-    res.status(400).json(error.message);
+    console.error("Error details:", error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message, errors: error.errors });
+    }
+    res.status(500).json({ message: "Server error while creating product" });
   }
-});
+};
 
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {

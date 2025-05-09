@@ -35,7 +35,7 @@ const Shop = () => {
     if (!checked.length || !radio.length) {
       if (!filteredProductsQuery.isLoading) {
         // Filter products based on both checked categories and price filter
-        const filteredProducts = filteredProductsQuery.data.filter(
+        const filteredProducts = filteredProductsQuery.data?.filter(
           (product) => {
             // Check if the product price includes the entered price filter value
             return (
@@ -60,7 +60,7 @@ const Shop = () => {
   const handleCheck = (value, id) => {
     const updatedChecked = value
       ? [...checked, id]
-      : checked.filter((c) => c !== id);
+      : checked?.filter((c) => c !== id);
     dispatch(setChecked(updatedChecked));
   };
 
@@ -85,7 +85,7 @@ const Shop = () => {
       <div className="container mx-auto">
         <div className="flex md:flex-row">
           <div className="bg-[#151515] p-3 mt-2 mb-2">
-            <h2 className="h4 text-center py-2 bg-black rounded-full mb-2">
+            <h2 className="h4 text-center py-2  rounded-full mb-2">
               Filter by Categories
             </h2>
 

@@ -1,5 +1,5 @@
-import { PRODUCT_URL, UPLOAD_URL } from "../constants";
-import { apiSlice } from "./apiSlice";
+import { PRODUCT_URL, UPLOAD_URL } from "../constants"
+import { apiSlice } from "./apiSlice"
 
 export const productApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,9 +14,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
 
     getProductById: builder.query({
       query: (productId) => `${PRODUCT_URL}/${productId}`,
-      providesTags: (result, error, productId) => [
-        { type: "Product", id: productId },
-      ],
+      providesTags: (result, error, productId) => [{ type: "Product", id: productId }],
     }),
 
     allProducts: builder.query({
@@ -48,11 +46,43 @@ export const productApiSlice = apiSlice.injectEndpoints({
     }),
 
     uploadProductImage: builder.mutation({
-      query: (data) => ({
-        url: `${UPLOAD_URL}`,
-        method: "POST",
-        body: data,
-      }),
+      query: (data) => {
+        // Log the upload URL for debugging
+        console.log("Uploading to:", UPLOAD_URL)
+
+        // Log FormData entries for debugging (can't directly log FormData)
+        if (process.env.NODE_ENV !== "production") {
+          try {
+            for (const pair of data.entries()) {
+              console.log("FormData entry:", pair[0], pair[1].name)
+            }
+          } catch (error) {
+            console.log("Error logging FormData:", error)
+          }
+        }
+
+        return {
+          url: `${UPLOAD_URL}`,
+          method: "POST",
+          body: data,
+          // Don't set Content-Type header - browser will set it with boundary for FormData
+          // Add credentials to ensure cookies are sent if needed
+          credentials: "include",
+        }
+      },
+      // Add onQueryStarted for additional debugging
+      async onQueryStarted(arg, { queryFulfilled, getState }) {
+        try {
+          // Get auth state to log authentication status
+          const { auth } = getState()
+          console.log("Auth state during upload:", auth.userInfo ? "User authenticated" : "No user auth")
+
+          const result = await queryFulfilled
+          console.log("Upload successful:", result.data)
+        } catch (error) {
+          console.error("Upload failed:", error)
+        }
+      },
     }),
 
     deleteProduct: builder.mutation({
@@ -89,7 +119,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
     }),
   }),
-});
+})
 
 export const {
   useGetProductByIdQuery,
@@ -104,4 +134,4 @@ export const {
   useGetNewProductsQuery,
   useUploadProductImageMutation,
   useGetFilteredProductsQuery,
-} = productApiSlice;
+} = productApiSlice

@@ -3,6 +3,9 @@ import formidable from "express-formidable";
 const router = express.Router();
 
 // controllers
+// In your productRoutes.js
+import uploadRouter from "./uploadRoutes.js"; // Import your existing upload router
+router.use("/upload", uploadRouter); // Mount it at /api/products/upload (assuming productRoutes is mounted at /api/products)
 import {
   addProduct,
   updateProductDetails,
@@ -21,7 +24,7 @@ import checkId from "../middlewares/checkId.js";
 router
   .route("/")
   .get(fetchProducts)
-  .post(authenticate, authorizeAdmin, formidable(), addProduct);
+  .post(authenticate, authorizeAdmin, addProduct); // Remove formidable()
 
 router.route("/allproducts").get(fetchAllProducts);
 router.route("/:id/reviews").post(authenticate, checkId, addProductReview);

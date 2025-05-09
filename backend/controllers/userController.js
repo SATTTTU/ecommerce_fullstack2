@@ -33,33 +33,36 @@ const createUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email);
-  console.log(password);
-
   const existingUser = await User.findOne({ email });
 
-  if (existingUser) {
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      existingUser.password
-    );
+  if (!existingUser) {
+    res.status(401);
+    throw new Error("Invalid email or password");
+  }
 
-    if (isPasswordValid) {
-      createToken(res, existingUser._id);
+  const isPasswordValid = await existingUser.matchPassword(password);
 
-      res.status(201).json({
-        _id: existingUser._id,
-        username: existingUser.username,
-        email: existingUser.email,
-        isAdmin: existingUser.isAdmin,
-      });
-      return;
-    }
+  if (isPasswordValid) {
+    createToken(res, existingUser._id);
+
+    res.status(200).json({
+      _id: existingUser._id,
+      name: existingUser.name,
+      email: existingUser.email,
+      isAdmin: existingUser.isAdmin,
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid email or password");
   }
 });
+
+
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {

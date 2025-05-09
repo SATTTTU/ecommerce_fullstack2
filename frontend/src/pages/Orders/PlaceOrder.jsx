@@ -62,26 +62,27 @@ const PlaceOrder = () => {
               </thead>
 
               <tbody>
-                {cart.cartItems.map((item, index) => (
-                  <tr key={index}>
-                    <td className="p-2">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-16 h-16 object-cover"
-                      />
-                    </td>
+              {cart.cartItems.map((item) => (
+  <tr key={item.product}> {/* Use a unique ID as the key */}
+    <td className="p-2">
+      <img
+        src={item.image}
+        alt={item.name}
+        className="w-16 h-16 object-cover"
+      />
+    </td>
 
-                    <td className="p-2">
-                      <Link to={`/product/${item.product}`}>{item.name}</Link>
-                    </td>
-                    <td className="p-2">{item.qty}</td>
-                    <td className="p-2">{item.price.toFixed(2)}</td>
-                    <td className="p-2">
-                      $ {(item.qty * item.price).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
+    <td className="p-2">
+      <Link to={`/product/${item.product}`}>{item.name}</Link>
+    </td>
+    <td className="p-2">{item.qty}</td>
+    <td className="p-2">{item.price.toFixed(2)}</td>
+    <td className="p-2">
+      $ {(item.qty * item.price).toFixed(2)}
+    </td>
+  </tr>
+))}
+
               </tbody>
             </table>
           </div>
@@ -89,7 +90,7 @@ const PlaceOrder = () => {
 
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-5">Order Summary</h2>
-          <div className="flex justify-between flex-wrap p-8 bg-[#181818]">
+          <div className="flex justify-between flex-wrap p-8]">
             <ul className="text-lg">
               <li>
                 <span className="font-semibold mb-4">Items:</span> $
